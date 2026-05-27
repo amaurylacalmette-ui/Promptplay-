@@ -1,0 +1,147 @@
+# 💳 PROMPTPLAY — PayPal Setup Guide
+## 4 Schritte, fertig in ~15 Minuten
+
+---
+
+## Was du brauchst
+- Ein PayPal Business-Konto (kostenlos)
+- Deine 3 IDs, die du in `index.html` einfügst
+
+---
+
+## SCHRITT 1 — PayPal Developer Account
+
+1. Geh auf **https://developer.paypal.com**
+2. Oben rechts: **Log into Dashboard** → meld dich mit deinem normalen PayPal-Konto an
+3. Klick auf **Apps & Credentials** (oben im Menü)
+4. Stell sicher, dass du auf **Live** bist (nicht Sandbox) oben rechts
+5. Klick **Create App**
+   - Name: `PromptPlay`
+   - App Type: `Merchant`
+   - Klick **Create App**
+6. Du siehst jetzt deinen **Client ID** — kopiere ihn
+   - Sieht so aus: `AaBbCcDd1234...` (lange Zeichenkette)
+   - Das ist dein `PAYPAL_CLIENT_ID`
+
+---
+
+## SCHRITT 2 — Abo-Pläne erstellen
+
+### Monatlicher Plan (€5)
+
+1. Geh zu **https://www.paypal.com/billing/plans**
+2. Klick **Create plan**
+3. Füll aus:
+   - **Product name:** PromptPlay Pro
+   - **Product description:** Unlimited game generation, Pro badge, reduced ads
+   - **Plan name:** Monthly
+   - **Billing cycle:** Every `1` `Month`
+   - **Price:** `5.00` EUR
+   - **Trial period:** optional (kannst du weglassen)
+4. Klick **Create plan**
+5. Kopiere die **Plan ID** → sieht aus wie `P-1AB23456CD789012EF345678`
+   - Das ist dein `PAYPAL_PLAN_MONTHLY`
+
+### Jährlicher Plan (€40)
+
+1. Wieder **Create plan**
+2. Wähle das gleiche Produkt (PromptPlay Pro)
+3. Plan name: Annual
+4. Billing cycle: Every `1` `Year`
+5. Price: `40.00` EUR
+6. Klick **Create plan**
+7. Kopiere die **Plan ID**
+   - Das ist dein `PAYPAL_PLAN_ANNUAL`
+
+---
+
+## SCHRITT 3 — IDs in die App eintragen
+
+Öffne `public/index.html` in einem Texteditor (z.B. VS Code oder Notepad).
+
+Suche nach dieser Stelle (ca. Zeile 2700):
+
+```javascript
+const PAYPAL_CLIENT_ID    = 'YOUR_PAYPAL_CLIENT_ID_HERE';
+const PAYPAL_PLAN_MONTHLY = 'YOUR_MONTHLY_PLAN_ID_HERE';
+const PAYPAL_PLAN_ANNUAL  = 'YOUR_ANNUAL_PLAN_ID_HERE';
+```
+
+Ersetze die Platzhalter mit deinen echten IDs:
+
+```javascript
+const PAYPAL_CLIENT_ID    = 'AaBbCcDd1234abcdefgh5678';
+const PAYPAL_PLAN_MONTHLY = 'P-1AB23456CD789012EF345678';
+const PAYPAL_PLAN_ANNUAL  = 'P-9XY87654ZW321098VU654321';
+```
+
+Speichern.
+
+---
+
+## SCHRITT 4 — Deployen
+
+Da PayPal **keinen Server** braucht, kannst du die App wieder ganz einfach deployen:
+
+### Netlify Drop (einfachste Methode)
+1. Geh auf **https://app.netlify.com/drop**
+2. Zieh den **`promptplay-deploy` Ordner** (nicht nur die HTML-Datei!) rein
+3. Fertig — deine Site ist live
+
+### Oder: Nur die index.html ersetzen
+Wenn du schon eine laufende Netlify-Site hast:
+1. Lad die neue `public/index.html` in deinen GitHub-Repo hoch
+2. Netlify deployed automatisch
+
+---
+
+## Wie es funktioniert (für dich)
+
+```
+User klickt "Abonnieren"
+  → PayPal-Button erscheint (von PayPal geladen)
+  → User zahlt direkt auf PayPal
+  → Geld geht sofort auf dein PayPal-Konto
+  → App schaltet Pro automatisch frei (31 oder 366 Tage)
+  → Du siehst die Zahlung in deinem PayPal-Dashboard
+```
+
+**Keine Server, keine Webhooks, kein Backend.** PayPal macht alles direkt im Browser.
+
+---
+
+## Gebühren
+
+| Transaktion | PayPal-Gebühr (EU) | Du bekommst |
+|---|---|---|
+| €5/Monat | ~€0.45 (3.5% + €0.25) | ~€4.55 |
+| €40/Jahr | ~€1.65 (3.5% + €0.25) | ~€38.35 |
+
+Auszahlung auf dein Bankkonto: kostenlos, dauert 1-3 Werktage.
+
+---
+
+## Kündigung durch User
+
+Wenn ein User kündigt:
+- Er geht zu **paypal.com → Kontoeinstellungen → Zahlungen → Abonnements verwalten**
+- Klickt auf PromptPlay → Kündigen
+- Sein Pro läuft bis zum Enddatum weiter (z.B. noch 15 Tage vom Monat)
+- Du siehst die Kündigung in deinem PayPal-Dashboard
+
+---
+
+## Testen (optional)
+
+Wenn du vorher testen willst ohne echtes Geld:
+1. Developer Dashboard → Apps & Credentials → **Sandbox** (oben)
+2. Erstell eine Sandbox-App mit einer Sandbox-Client-ID
+3. Erstell Sandbox-Pläne unter **https://www.sandbox.paypal.com/billing/plans**
+4. Trag die Sandbox-IDs ein und teste mit dem Sandbox-Testkäufer-Account
+5. Danach mit echten Live-IDs ersetzen
+
+---
+
+## Fertig! 🎉
+
+Sobald du die 3 IDs eingetragen und deployed hast, sehen deine User echte PayPal-Buttons im Pro-Modal.
